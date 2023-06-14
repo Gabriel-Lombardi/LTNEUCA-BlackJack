@@ -8,17 +8,21 @@ struct Carta {        // estructura de datos de la carta que se muestra, su palo
   char valor;
 };
 
-struct Ficha {        // estructura para
+struct Ficha {        // estructura de datos de las fichas para "apuestas"
   int valor;
 };
 
+// funcion para asignar el valor de las cartas para la suma de puntos
+
 int obtenerValorCarta(Carta* carta) {
   if (strcmp(carta->valor, "As") == 0)
-    return 11;
+    return 11; // el As puede valer 11 o 1, dependiendo si favorece a la suma de puntos.
   if (strcmp(carta->valor, "Rey") == 0 || strcmp(carta->valor, "Reina") == 0 || strcmp(carta->valor, "Jota") == 0)
-    return 10;
-  return atoi(carta->valor);
+    return 10; // la K, Q y J valen 10 en la suma de puntos.
+  return atoi(carta->valor); // devolvemos un numero entero
 }
+
+// repartir cartas de manera aleatoria
 
 void barajarMazo(Carta** mazo, int dimension) {
   srand(time(NULL));
@@ -30,6 +34,8 @@ void barajarMazo(Carta** mazo, int dimension) {
   }
 }
 
+// funcion para mostrar las fichas (9) con valor:
+// 1, 5, 25, 50, 100, 500, 1000, 2000, 5000, 10000
 void mostrarFichasDisponibles(Ficha** fichas) {
   printf("Fichas disponibles:\n");
   for (int i = 0; i < 9; ++i) {
@@ -37,6 +43,7 @@ void mostrarFichasDisponibles(Ficha** fichas) {
   }
 }
 
+// funcion para guardar el dinero apostado dentro de un archivo "dinero.txt"
 void guardarDinero(int dinero) {       // funcion para guardar el dinero
   FILE* fp = fopen("dinero.txt", "w"); // abrimos el archivo para escribir en él (w de write)
   if (fp != NULL) {
@@ -48,6 +55,7 @@ void guardarDinero(int dinero) {       // funcion para guardar el dinero
   }
 }
 
+// funcion para determinar cuanto dinero se tiene, leyendo el archivo anteriormente creado
 int cargarDinero() {
   FILE* fp = fopen("dinero.txt", "r"); // abrimos el archivo solo para leerlo (r de read)
   if (fp != NULL) {
@@ -63,8 +71,8 @@ int cargarDinero() {
 }
 
 void dibujarCarta(char* palo, int valor) {
-  int  n_palo;
-  char valor_palo = 'N';
+  int  n_palo;           // variable para asignar el numero del palo que coincida con el simbolo ASCII de las cartas (♥ ♦ ♣ ♠)
+  char valor_palo = 'N'; // variable con un caracter base para determinar si el valor a imprimir es A, J, Q, K o un numero del 2 al 10
 
   if (strcmp(palo,"Corazones") == 0) n_palo = 3;
   if (strcmp(palo,"Diamantes") == 0) n_palo = 4;
