@@ -2,24 +2,34 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
+#include <windows.h>
 
 struct Carta {        // estructura de datos de la carta que se muestra, su palo (naipe) y valor
-  char palo;
-  char valor;
+  char* palo;
+  int valor;
 };
 
 struct Ficha {        // estructura de datos de las fichas para "apuestas"
   int valor;
 };
 
+void menu() {
+  printf("%c%c%c  %c    %c%c   %c%c%c %c  %c    %c  %c%c   %c%c%c %c  %c\n", 220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220);
+  printf("%c  %c %c   %c  %c %c    %c %c%c    %c %c  %c %c    %c %c%c\n", 219,219,219,219,219,219,219,220,223,219,219,219,219,219,220,223);
+  printf("%c%c%c%c %c   %c%c%c%c %c    %c%c%c     %c %c%c%c%c %c    %c%c%c\n", 219,223,223,220,219,219,220,220,219,219,219,223,220,219,219,220,220,219,219,219,223,220);
+  printf("%c%c%c%c %c%c%c %c  %c %c%c%c%c %c  %c %c%c%c%c %c  %c %c%c%c%c %c  %c\n", 219,220,220,223,219,220,220,219,219,223,220,220,220,219,219,223,220,220,223,219,219,223,220,220,220,219,219);
+  printf("\n\n");
+}
+
 // funcion para asignar el valor de las cartas para la suma de puntos
 
 int obtenerValorCarta(Carta* carta) {
-  if (strcmp(carta->valor, "As") == 0)
+  if (carta->valor == 1)
     return 11; // el As puede valer 11 o 1, dependiendo si favorece a la suma de puntos.
-  if (strcmp(carta->valor, "Rey") == 0 || strcmp(carta->valor, "Reina") == 0 || strcmp(carta->valor, "Jota") == 0)
+  if (carta->valor == 13 || carta->valor == 12 || carta->valor == 11)
     return 10; // la K, Q y J valen 10 en la suma de puntos.
-  return atoi(carta->valor); // devolvemos un numero entero
+  return carta->valor; // devolvemos el valor de la carta
 }
 
 // repartir cartas de manera aleatoria
@@ -34,12 +44,28 @@ void barajarMazo(Carta** mazo, int dimension) {
   }
 }
 
+// funcion para dibujar ficha de apuesta tipo poker
+void dibujarFicha(int valor) {
+  system("cls");
+  for(int i = 0; i < 9; i++) {
+    // Imprimir la ficha en la consola
+    printf("\033[0;31m");
+    printf(" ________ \n");
+    printf("%c        %c\n", 47,92);
+    printf("|    %d   |\n", valor);
+    printf("|         |\n");
+    printf("%c_______%c\n", 92,47);
+    printf("\033[0m");
+  }
+}
+
 // funcion para mostrar las fichas (9) con valor:
 // 1, 5, 25, 50, 100, 500, 1000, 2000, 5000, 10000
 void mostrarFichasDisponibles(Ficha** fichas) {
-  printf("Fichas disponibles:\n");
+  printf("\nFichas disponibles:\n");
   for (int i = 0; i < 9; ++i) {
     printf("Ficha %d: $%d\n", i + 1, fichas[i]->valor);
+    dibujarFicha(fichas[i]->valor);
   }
 }
 
@@ -49,9 +75,9 @@ void guardarDinero(int dinero) {       // funcion para guardar el dinero
   if (fp != NULL) {
     fprintf(fp, "%d", dinero);
     fclose(fp);
-    printf("¡Dinero guardado exitosamente!\n");
+    printf("Dinero guardado exitosamente!\n");
   } else {
-    printf("No se pudo guardar el dinero dentro del archivo :(\n");
+    printf("No se pudo guardar el dinero dentro del archivo.\n");
   }
 }
 
@@ -60,17 +86,17 @@ int cargarDinero() {
   FILE* fp = fopen("dinero.txt", "r"); // abrimos el archivo solo para leerlo (r de read)
   if (fp != NULL) {
     int dinero;
-    fscanf(fp, "%d", dinero);
+    fscanf(fp, "%d", &dinero);
     fclose(fp);
-    printf("¡Dinero cargado exitosamente!\n");
+    printf("Dinero cargado exitosamente!\n");
     return dinero;
   } else {
-    printf("No se pudo cargar el dinero dentro del archivo ;(\n");
+    printf("No se pudo cargar el dinero dentro del archivo. Su dinero es $1000\n");
     return 1000; // valor predeterminado
   }
 }
 
-void dibujarCarta(char* palo, int valor) {
+void mostrarMano(char* palo, int valor) {
   int  n_palo;           // variable para asignar el numero del palo que coincida con el simbolo ASCII de las cartas (♥ ♦ ♣ ♠)
   char valor_palo = 'N'; // variable con un caracter base para determinar si el valor a imprimir es A, J, Q, K o un numero del 2 al 10
 
@@ -79,10 +105,10 @@ void dibujarCarta(char* palo, int valor) {
   if (strcmp(palo,"Treboles")  == 0) n_palo = 5;
   if (strcmp(palo,"Picas")     == 0) n_palo = 6;
 
-  if (valor == 0)  valor_palo = 'A';
-  if (valor == 10) valor_palo = 'J';
-  if (valor == 11) valor_palo = 'Q';
-  if (valor == 12) valor_palo = 'K';
+  if (valor == 1)  valor_palo = 'A';
+  if (valor == 11) valor_palo = 'J';
+  if (valor == 12) valor_palo = 'Q';
+  if (valor == 13) valor_palo = 'K';
 
   printf("%c", 218);
   for (int i = 0; i < 10; i++) {
@@ -109,9 +135,11 @@ void dibujarCarta(char* palo, int valor) {
 }
 
 int main() {
+  menu();
   Carta* mazo[52];
-  char palos[] = {"Corazones", "Diamantes", "Treboles", "Picas"};
-  char valores[] = {"As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rey"};
+  const char *palos[] = {"Corazones", "Diamantes", "Treboles", "Picas"};
+  // char *valores[] = {"As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rey"};
+  int valores[] = {1,2,3,4,5,6,7,8,9,10,11,12,13};
   Ficha* fichas[9];
   int valoresFichas[] = {1, 5, 25, 50, 100, 500, 1000, 2000, 5000, 10000};
   int dinero;
@@ -121,9 +149,10 @@ int main() {
   int contador = 0;
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 13; ++j) {
-      mazo[contador] = (Carta*)malloc(sizeof(Carta));
+      mazo[contador] = (Carta*)malloc(sizeof(Carta)); // Asignar memoria para la estructura de la carta
+      mazo[contador]->palo  = (char*)malloc(strlen(palos[i]) + 1);  // Asignar memoria para el palo
       strcpy(mazo[contador]->palo, palos[i]);
-      strcpy(mazo[contador]->valor, valores[j]);
+      mazo[contador]->valor = valores[j]; // Asignar valor correspondiente
       contador++;
     }
   }
@@ -135,86 +164,102 @@ int main() {
     fichas[i]->valor = valoresFichas[i];
   }
 
-  int totalJugador = 0;
-  int totalCrupier = 0;
-  int indice       = 0;
+  int dineroApostado = 0;
+  int totalJugador   = 0;
+  int totalCrupier   = 0;
+  int valorFicha     = 0;
+  int indice         = 0;
 
   //turno del jugador
-  while (1) {
+  // realizar apuesta
+  mostrarFichasDisponibles(fichas);
+  int fichaElegida;
+  printf("\nElige el numero de la ficha para apostar: ");
+  scanf("%d", &fichaElegida);
+  if (fichaElegida >= 1 && fichaElegida <= 9) {
+    valorFicha = fichas[fichaElegida - 1]->valor;
+    dineroApostado = valorFicha;
+    if (valorFicha > dinero) {
+      printf("\nNo tenes suficiente dinero como para realizar esa apuesta.\n");
+      return 0;
+    }
+    dinero -= valorFicha;
+    printf("\nHas realizado una apuesta de $%d.\n", valorFicha);
+  } else {
+    printf("\nOpcion invalida.\n");
+    return 0;
+  }
+
+  while (totalJugador <= 21) {
     Carta* cartaActual = mazo[indice];
-    printf("El jugador obtuvo un %s de %s.\n", cartaActual->valor, cartaActual->palo);
+    mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+    if (mazo[indice]->valor == 11) {
+      printf("\nEl jugador obtuvo J de %s.\n", cartaActual->valor, cartaActual->palo);
+    } else if (mazo[indice]->valor == 12) {
+      printf("\nEl jugador obtuvo Q de %s.\n", cartaActual->valor, cartaActual->palo);
+    } else if (mazo[indice]->valor == 13) {
+      printf("\nEl jugador obtuvo K de %s.\n", cartaActual->valor, cartaActual->palo);
+    } else {
+      printf("\nEl jugador obtuvo un %d de %s.\n", cartaActual->valor, cartaActual->palo);
+    }
     totalJugador += obtenerValorCarta(cartaActual);
-    printf("Total del jugador: %d\n", totalJugador);
-    if (totalJugador > 21) {
-      printf("El jugador se pasó de 21. ¡Crupier gana!\n");
+    printf("\nTotal del jugador: %d\n", totalJugador);
+    if (totalJugador == 21) {
+      int ganancias = valorFicha * 2;
+      printf("Blackjack! El jugador gana. Has gando $%d", ganancias);
+      dinero += valorFicha * 2; // dar al jugador lo acordado de la apuesta
+    } else if (totalJugador > 21) {
+      int perdidas = dineroApostado;
+      printf("\nEl jugador se pasó de 21. Crupier gana! Has perdido $%d\n", perdidas);
       break;
     }
-    printf("¿Querés agarrar otra carta, realizar una apuesta o plantarte (quedarte con las cartas que tenes)? (c: carta | a: apuesta | p: plantarte): ");
+    printf("\nPodes agarrar otra carta, doblar la apuesta o plantarte (q: quedarte | d: doblar apuesta | p: plantarte): ");
     char opcion;
-    scanf(" %c", &opcion);
-    if (opcion == 'c') {        // repartir otra carta al jugador
+    scanf("%c", &opcion);
+    if (opcion == 'q') {        // repartir otra carta al jugador
       indice++;
-    } else if (opcion == 'a') { // realizar apuesta
-      mostrarFichasDisponibles(fichas);
-      int fichaElegida;
-      printf("Elige el número de la ficha para apostar: ");
-      scanf("%d", &fichaElegida);
-      if (fichaElegida >= 1 && fichaElegida <= 9) {
-        int valorFicha = fichas[fichaElegida - 1]->valor;
-        if (valorFicha > dinero) {
-          printf("No tenes suficiente dinero como para realizar esa apuesta.\n");
-          continue;
-        }
-        dinero -= valorFicha;
-        printf("Has realizado una apuesta de %d.\n", valorFicha);
-        indice++;
-      } else {
-        printf("Opcion invalida.\n");
-        continue;
-      }
+    } else if (opcion == 'd') { // doblar apuesta
+      dineroApostado *= 2;
     } else if (opcion = 'p') { // plantarse
       break;
     } else {
-      printf("Opcion invalida.\n");
-      continue;
+      printf("\nOpcion invalida.\n");
     }
   }
-
   // turno del crupier
   if (totalJugador <= 21) {
+    sleep(2);
     printf("\nTurno del crupier:\n");
 
     while (totalCrupier < 17) {
       Carta* cartaActual = mazo[indice];
-      printf("El crupier obtuvo un %s de %s\n", cartaActual->valor, cartaActual->palo);
+      mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+      printf("\nEl crupier obtuvo un %d de %s\n", cartaActual->valor, cartaActual->palo);
       totalCrupier += obtenerValorCarta(cartaActual);
-      printf("Total del crupier: %d\n", totalCrupier);
+      printf("\nTotal del crupier: %d\n", totalCrupier);
       indice ++;
     }
 
     if (totalCrupier > 21) {
-      printf("El crupier se paso de 21. ¡Jugador gana!\n");
-      dinero += valorFicha * 2;
+      int ganancias = valorFicha * 2;
+      printf("\nEl crupier se paso de 21. Jugador gana! Has ganado $%d\n", ganancias);
+      dinero += valorFicha * 2; // dar al jugador lo acordado de la apuesta
     } else if (totalCrupier > totalJugador) {
-      printf("Crupier gana.\n");
+      int perdidas = dineroApostado;
+      printf("\nCrupier gana. Has perdido $%d\n", perdidas);
     } else if (totalCrupier < totalJugador) {
-      printf("Jugador gana.\n");
+      int ganancias = valorFicha * 2;
+      dinero += ganancias; // dar al jugador lo acordado de la apuesta
+      printf("\nJugador gana. Has ganado $%d\n", ganancias);
     } else {
-      printf("Empate.\n");
-      dinero += valorFicha;
+      dinero += dineroApostado; // devolver dinero apostado al jugador
+      printf("\nEmpate. Se le devuelve el dinero apostado ($%d).\n", dineroApostado);
     }
   }
 
   guardarDinero(dinero);
 
-  // liberar memoria
-  for (int i = 0; i < 52; ++i) {
-    free(mazo[i]);
-  }
-
-  for (int i = 0; i < 9; ++i) {
-    free(fichas[i]);
-  }
+  if(dinero == 0) printf("\nTe has quedado sin dinero. Fin del juego.\n");
 
   return 0;
 }
