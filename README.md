@@ -20,5 +20,5 @@ Proyecto VideoJuego\
 
 
 Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
-○ link de descarga: https://sourceforge.net/projects/mingw/\
+○ link de descarga: https://sourceforge.net/projects/mingw/ \
 ○ tutorial de descarga: https://www.youtube.com/watch?v=GEZLjRSY_m8\
