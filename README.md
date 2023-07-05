@@ -25,4 +25,7 @@ Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
 
 Una vez instalado (o antes o durante), deberá descargar un archivo. zip que contiene lo necesario para jugar correctamente. \
 El archivo .zip se descarga haciendo click en el button verde que dice "<> Code" en la parte superior derecha de los archivos dentro de este repositorio y luego click en "Download .zip". \
-![No cargó la imagen](DownloadZip.jpg)
+![No cargó la imagen](DownloadZip.jpg) \
+Una vez descargado debe descomprimirlo y abrir el archivo "ltneuca.exe". \
+Puede hacer un acceso directo en el escritorio (click derecho, Enviar a [escritorio]) así es más cómodo para su uso. \
+A este acceso directo puede ponerle el icono que dejé :) \
