@@ -30,6 +30,28 @@ int  mostrarDineroGuardado();
 int  obtenerValorCarta();
 int  cargarDinero();
 
+// Funcion que pone en pantalla completa el juego
+void AltEnter()
+{
+    keybd_event(VK_MENU,
+                0x38,
+                0,
+                0);
+    keybd_event(VK_RETURN,
+                0x1c,
+                0,
+                0);
+    keybd_event(VK_RETURN,
+                0x1c,
+                KEYEVENTF_KEYUP,
+                0);
+    keybd_event(VK_MENU,
+                0x38,
+                KEYEVENTF_KEYUP,
+                0);
+    return;
+}
+
 // Funcion que imprime "LTNEUCA" en la pantalla con caracteres ASCII
 void imprimirLTNEUCA() {
   system("cls");
@@ -56,8 +78,9 @@ void imprimirBLACKJACK() {
 void mostrarMenu() {
   printf("\n=== La Timba NO Es Una Cosa Alegre ===\n");
   printf("1. Jugar partida\n");
-  printf("2. Borrar dinero guardado\n");
-  printf("3. Salir\n");
+  printf("2. Ver dinero guardado.\n");
+  printf("3. Borrar dinero guardado\n");
+  printf("4. Salir\n");
   printf("Ingrese su opcion: ");
 }
 
@@ -119,7 +142,7 @@ int cargarDinero() {
     fscanf(fp, "%d", &dinero);
     fclose(fp);
     if (dinero < 50) {
-      printf("No tenes nada! Toma $1000 ;)\n");
+      printf("\nNo tenes nada! Toma $1000 ;)\n");
       return 1000;
     }
     printf("\nDinero cargado exitosamente!\n");
@@ -128,6 +151,28 @@ int cargarDinero() {
     printf("\nNo se pudo cargar el dinero dentro del archivo. Su dinero es $1000\n");
     return 1000; // Valor predeterminado
   }
+}
+
+void verDinero() {
+  FILE* fp = fopen("dinero.txt", "r"); // Abrimos el archivo solo para leerlo (r de read)
+  if (fp != NULL) {
+    int dinero;
+    fscanf(fp, "%d", &dinero);
+    fclose(fp);
+    printf("\nDinero guardado: $%d\n", dinero);
+  } else {
+    printf("\nNo hay dinero dentro del archivo.\n");
+  }
+}
+
+void borrarDinero() {
+  int dinero = 0;
+  FILE *fp = fopen("dinero.txt", "w");
+  fprintf(fp, "%d", dinero);
+  fclose(fp);
+  printf("\nDinero quemado con exito.");
+  printf("\nVolviendo al menu...\n");
+  sleep(2);
 }
 
 // int mostrarDineroGuardado(const char* dineroGuardado, int* perfiles) {
@@ -195,6 +240,7 @@ void mostrarMano(char* palo, int valor) {
 }
 
 int main() {
+  AltEnter();
   imprimirLTNEUCA();
   imprimirBLACKJACK();
   imprimirLTNEUCA();
@@ -207,7 +253,7 @@ int main() {
 
   menu:
   mostrarMenu();
-  int opcion, eleccion;
+  int opcion, eleccion, salirAlMenu;
   scanf("%d", &opcion);
 
   switch (opcion) {
@@ -217,16 +263,28 @@ int main() {
       system("cls");
       break;
     case 2:
-      printf("Seguro que quiere borrar todos los registros de dinero guardados? s/n:");
-      scanf(" %d", &eleccion);
-      if (eleccion == 's') {
-        FILE *fp = fopen("dinero.txt", "w");
-        printf("Dinero quemado con exito.");
-        break;
-      } else if (eleccion == 'n') {
-        break;
+      verDinero();
+      printf("\nPresione cualquier tecla para ir al menu ");
+      getch();
+      system("cls");
+      goto menu;
+    case 3:
+      quemar:
+      printf("\nSeguro que quiere borrar todos los registros de dinero guardados? s/n: ");
+      scanf(" %c", &eleccion);
+      if (eleccion == 's' || eleccion == 'S' || eleccion == 'y' || eleccion == 'Y') {
+        borrarDinero();
+        sleep(2);
+        system("cls");
+        goto menu;
+      } else if (eleccion == 'n' || eleccion == 'N') {
+        printf("\nVolviendo al menu...\n");
+        sleep(2);
+        system("cls");
+        goto menu;
       } else {
-        printf("Opcion invalida, es si (s), o no (n)");
+        printf("\nOpcion invalida, es si (s), o no (n)\n");
+        goto quemar;
         break;
       }
       // printf("Cuentas con dinero guardado:\n");
@@ -237,14 +295,15 @@ int main() {
       // printf("\n");
       // scanf(" %d", &partida);
       // break;
-    case 3:
+    case 4:
       // Salir del programa
-      printf("Saliendo del programa...\n");
+      printf("\nSaliendo del programa...\n");
       exit(0);
     default:
-      printf("Opcion invalida. Intente nuevamente.\n");
+      printf("\nOpcion invalida. Intente nuevamente.\n");
       break;
   }
+
   Carta* mazo[52];
   const char *palos[] = {"Corazones", "Diamantes", "Treboles", "Picas"};
   // char *valores[] = {"As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rey"};
@@ -305,6 +364,7 @@ int main() {
     }
 
     while (totalJugador <= 21) {
+      bool esNum = false;
       Carta* cartaActual = mazo[indice];
       totalJugador += obtenerValorCarta(cartaActual,totalJugador);
       turnoJugador:
@@ -331,6 +391,7 @@ int main() {
         printf("\nTe has pasado de 21. Crupier gana! Has perdido $%d\n", perdidas);
         goto fin;
       }
+      opcionC:
       printf("\nPodes agarrar otra carta, doblar la apuesta o plantarte (1: +1 carta | 2: doblar apuesta | 3: plantarte): ");
       int opcion;
       scanf(" %d", &opcion);
@@ -338,6 +399,7 @@ int main() {
         mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
         Carta* cartaActual = mazo[indice];
         indice++;
+        esNum = true;
       } else if (opcion == 2) { // Doblar apuesta
         if (dineroApostado * 2 > dinero) {
           system("cls");
@@ -348,12 +410,23 @@ int main() {
         Carta* cartaActual = mazo[indice];
         indice++;
         dineroApostado *= 2;
+        esNum = true;
       } else if (opcion == 3) { // Plantarse
         plantar = true;
+        esNum = true;
         break;
+      } else if (esNum == false) {
+        printf("\nIngrese un numero valido, vamos de nuevo...\n");
+        sleep(2);
+        system("cls");
+        goto opcionC;
+        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
       } else {
-        printf("\nOpcion invalida.\n");
-        continue;
+        printf("\nOpcion invalida, vamos de nuevo...\n");
+        sleep(2);
+        system("cls");
+        goto opcionC;
+        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
       }
     }
     // Turno del crupier
