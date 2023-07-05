@@ -23,6 +23,7 @@ void mostrarFichasDisponibles();
 void imprimirBLACKJACK();
 void imprimirLTNEUCA();
 void guardarDinero();
+void mensajeError();
 void mostrarMano();
 void mostrarMenu();
 void barajarMazo();
@@ -74,6 +75,27 @@ void imprimirBLACKJACK() {
   Sleep(1000);
 }
 
+void reglas() {
+  printf("=== REGLAS ===\n");
+  printf("Esta version de BlackJack es distinta a las ya existentes, en este juego, la idea es no superar los 21, si llegas a 21, ganaste!\n");
+  printf("El juego le dará una carta para empezar, debe tener en cuenta el número de esta\n");
+  printf("\n");
+  printf("=== VALOR DE LAS CARTAS ===\n");
+  printf("El valor de las cartas en el Blackjack es muy importante ya que debemos de saber en todo momento la suma de nuestra mano para saber qué decisión tomar.\n");
+  printf("Si no sabemos cuánto vale nuestra mano, nunca podremos aplicar una estrategia que nos permita ganar.\n");
+  printf("Los valores que toman las cartas son los siguientes:\n  %cDe la carta dos (2) hasta la carta diez (10), el valor de la carta es su propio número.\n", 175);
+  printf("  %cLas figuras valen diez (10).\n", 175);
+  printf("  %cLos Ases pueden valer uno (1) u once (11), eso depende de usted, usted elige cual le conviene.\n", 175);
+  printf("=== TURNO DEL CRUPIER ===\n");
+  printf("En esta version del juego, el crupier juega en base a tu puntuacion, y no al reves como lo suele ser.\n");
+  printf("Esto supone una gran desventaja, ya que la banca siempre tiene las de ganar y mas en este caso.\n");
+  printf("\n\nSi desea continuar, toque cualquier tecla");
+  getch();
+  printf("\n\n== Buena suerte! ==\n");
+  sleep(5);
+  system("cls");
+}
+
 // Menu interactivo, casos en la funcion main
 void mostrarMenu() {
   printf("\n=== La Timba NO Es Una Cosa Alegre ===\n");
@@ -84,12 +106,34 @@ void mostrarMenu() {
   printf("Ingrese su opcion: ");
 }
 
+void opcionInvalida() {
+  for (int i = 0; i < 3; i++) {
+    printf("\nOpcion invalida! Ingrese un numero...\n");
+    sleep(1);
+    system("cls");
+    sleep(1);
+  }
+}
+
 
 // Funcion para asignar el valor de las cartas para la suma de puntos
 int obtenerValorCarta(Carta* carta, int totalJugador) {
+  int opcion;
   if (carta->valor == 1) {
-    if (totalJugador + 11 > 21) return 1;
-    else                        return 11;
+    valorAs:
+    printf("Le ha tocado un As, prefiere que su valor sea 1 u 11?\n");
+    if (scanf(" %d", &opcion) == 1) {
+      if (opcion == 1) {
+        printf("Su eleccion fue 1, este As vale 1 ahora.\n");
+        return 1;
+      } else if (opcion == 11) {
+        printf("Su eleccion fue 11, este As vale 11 ahora.\n");
+        return 11;
+      }
+    } else {
+      opcionInvalida();
+      goto valorAs;
+    }
   }
   // El As puede valer 11 o 1, dependiendo si favorece a la suma de puntos (si los puntos del jugador + 11 da mas de 21 pasa a valer 1).
   if (carta->valor == 13 || carta->valor == 12 || carta->valor == 11)
@@ -145,7 +189,7 @@ int cargarDinero() {
       printf("\nNo tenes nada! Toma $1000 ;)\n");
       return 1000;
     }
-    printf("\nDinero cargado exitosamente!\n");
+    printf("\nBilletera virtual guardada exitosamente!\n");
     return dinero;
   } else {
     printf("\nNo se pudo cargar el dinero dentro del archivo. Su dinero es $1000\n");
@@ -246,6 +290,8 @@ int main() {
   imprimirLTNEUCA();
   imprimirBLACKJACK();
 
+  reglas();
+
   // int perfiles[PERFILES_MAXIMOS];
   // const char* dineroGuardado = "dinero.txt";
 
@@ -253,7 +299,8 @@ int main() {
 
   menu:
   mostrarMenu();
-  int opcion, eleccion, salirAlMenu;
+  int opcion, salirAlMenu;
+  char eleccion;
   scanf("%d", &opcion);
 
   switch (opcion) {
@@ -270,6 +317,7 @@ int main() {
       goto menu;
     case 3:
       quemar:
+      verDinero();
       printf("\nSeguro que quiere borrar todos los registros de dinero guardados? s/n: ");
       scanf(" %c", &eleccion);
       if (eleccion == 's' || eleccion == 'S' || eleccion == 'y' || eleccion == 'Y') {
@@ -304,6 +352,7 @@ int main() {
       break;
   }
 
+  reinicio:
   Carta* mazo[52];
   const char *palos[] = {"Corazones", "Diamantes", "Treboles", "Picas"};
   // char *valores[] = {"As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rey"};
@@ -327,7 +376,7 @@ int main() {
 
   barajarMazo(mazo, 52);
 
-  for(int i = 0; i < 9; i++) {
+  for(int i = 0; i < 7; i++) {
     fichas[i] = (Ficha*)malloc(sizeof(Ficha));
     fichas[i]->valor = valoresFichas[i];
   }
@@ -340,10 +389,10 @@ int main() {
   bool plantar       = false;
 
   while (1){
-  // Turno del jugador
-  // Realizar apuesta
+    // Turno del jugador
+    // Realizar apuesta
     apuesta:
-    printf("\nTienes $%d\n", dinero);
+    printf("\nTenes $%d\n", dinero);
     mostrarFichasDisponibles(fichas);
     int fichaElegida;
     printf("\nElige el numero de la ficha para apostar: ");
@@ -352,15 +401,19 @@ int main() {
       valorFicha = fichas[fichaElegida - 1]->valor;
       dineroApostado = valorFicha;
       if (valorFicha > dinero) {
-        system("cls");
-        printf("\nNo tenes suficiente dinero como para realizar esa apuesta.\n");
+        for (int i = 0; i < 3; i++) {
+          printf("\nNo tenes suficiente dinero como para realizar esa apuesta!\n");
+          sleep(2);
+          system("cls");
+          sleep(1);
+        }
         goto apuesta;
       }
       dinero -= valorFicha;
       printf("\nHas realizado una apuesta de $%d.\n", valorFicha);
     } else {
-      printf("\nOpcion invalida.\n");
-      return 0;
+      opcionInvalida();
+      goto apuesta;
     }
 
     while (totalJugador <= 21) {
@@ -394,40 +447,61 @@ int main() {
       opcionC:
       printf("\nPodes agarrar otra carta, doblar la apuesta o plantarte (1: +1 carta | 2: doblar apuesta | 3: plantarte): ");
       int opcion;
-      scanf(" %d", &opcion);
-      if (opcion == 1) {        // Repartir otra carta al jugador
-        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
-        Carta* cartaActual = mazo[indice];
-        indice++;
-        esNum = true;
-      } else if (opcion == 2) { // Doblar apuesta
-        if (dineroApostado * 2 > dinero) {
+      char opcionChar;
+      if (scanf(" %d", &opcion) == 1) {
+        if (opcion == 1) {        // Repartir otra carta al jugador
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+          Carta* cartaActual = mazo[indice];
+          indice++;
+        } else if (opcion == 2) { // Doblar apuesta
+          if (dineroApostado * 2 > dinero) {
+            system("cls");
+            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n");
+            goto turnoJugador;
+          }
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+          Carta* cartaActual = mazo[indice];
+          indice++;
+          dineroApostado *= 2;
+        } else if (opcion == 3) { // Plantarse
+          plantar = true;
+          break;
+        } else {
+          printf("\nIngrese un numero valido, vamos de nuevo...\n");
+          sleep(2);
           system("cls");
-          printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n");
-          goto turnoJugador;
+          goto opcionC;
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
         }
-        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
-        Carta* cartaActual = mazo[indice];
-        indice++;
-        dineroApostado *= 2;
-        esNum = true;
-      } else if (opcion == 3) { // Plantarse
-        plantar = true;
-        esNum = true;
-        break;
-      } else if (esNum == false) {
-        printf("\nIngrese un numero valido, vamos de nuevo...\n");
-        sleep(2);
-        system("cls");
-        goto opcionC;
-        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
       } else {
-        printf("\nOpcion invalida, vamos de nuevo...\n");
-        sleep(2);
-        system("cls");
-        goto opcionC;
-        mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+        scanf(" %c", &opcionChar);
+        if (opcionChar == 'c' || opcionChar == 'q') {        // Repartir otra carta al jugador
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+          Carta* cartaActual = mazo[indice];
+          indice++;
+          esNum = true;
+        } else if (opcionChar == 'd') { // Doblar apuesta
+          if (dineroApostado * 2 > dinero) {
+            system("cls");
+            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n");
+            goto turnoJugador;
+          }
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+          Carta* cartaActual = mazo[indice];
+          indice++;
+          dineroApostado *= 2;
+        } else if (opcionChar == 'p') { // Plantarse
+          plantar = true;
+          break;
+        } else {
+          printf("\nIngrese un numero valido, vamos de nuevo...\n");
+          sleep(2);
+          system("cls");
+          goto opcionC;
+          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+        }
       }
+      
     }
     // Turno del crupier
     if (totalJugador <= 21 || plantar == true) {
@@ -449,9 +523,9 @@ int main() {
         } else {
           printf("\nEl crupier obtuvo un %d de %s.\n", mazo[indice]->valor, cartaActual->palo);
         }
-        sleep(2);
         totalCrupier += obtenerValorCarta(cartaActual,totalCrupier);
         printf("\nTotal del crupier: %d\n", totalCrupier);
+        sleep(2);
         if (totalCrupier > totalJugador) {
           int perdidas = dineroApostado;
           printf("\nCrupier gana. Has perdido $%d\n", perdidas);
@@ -480,7 +554,16 @@ int main() {
     fin:
     sleep(5);
     guardarDinero(dinero);
-    if(dinero == 0){printf("\nTe has quedado sin dinero. Fin del juego.\n"); return 0;}
+    if(dinero == 0){
+      for (int i = 0; i < 3; i++) {
+        printf("\nTe has quedado sin dinero. Fin del juego.\n");
+        sleep(2);
+        system("cls");
+        sleep(1);
+      }
+      goto menuFin;
+      }
+    menuFin:  
     sleep(6);
     int fin;
     system("cls");
@@ -494,11 +577,12 @@ int main() {
       case 1:
         totalJugador = 0;
         totalCrupier = 0;
-        continue;
+        goto reinicio;
       case 2:
         goto menu;
       case 3:
         printf("\nHasta luego!\n");
+        sleep(3);
         exit(0);
     }
   }
