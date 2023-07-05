@@ -24,4 +24,4 @@ Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
 ○ Tutorial de descarga: https://www.youtube.com/watch?v=GEZLjRSY_m8\
 
 Una vez instalado (o antes o durante), deberá descargar un archivo. zip que contiene lo necesario para jugar correctamente. \
-El archivo .zip se descarga haciendo click en "" en la parte superior derecha de los archivos dentro de este repositorio. \
+El archivo .zip se descarga haciendo click en el button verde que dice "<> Code" en la parte superior derecha de los archivos dentro de este repositorio y luego click en "Download .zip". \
