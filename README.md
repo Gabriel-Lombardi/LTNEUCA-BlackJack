@@ -28,4 +28,4 @@ El archivo .zip se descarga haciendo click en el button verde que dice "<> Code"
 ![No cargó la imagen](DownloadZip.jpg) \
 Una vez descargado debe descomprimirlo y abrir el archivo "ltneuca.exe". \
 Puede hacer un acceso directo en el escritorio (click derecho, Enviar a [escritorio]) así es más cómodo para su uso. \
-A este acceso directo puede ponerle el icono que dejé :) \
+A este acceso directo puede ponerle el icono que dejé :) 
