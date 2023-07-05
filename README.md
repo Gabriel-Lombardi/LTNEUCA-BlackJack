@@ -25,4 +25,4 @@ Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
 
 Una vez instalado (o antes o durante), deberá descargar un archivo. zip que contiene lo necesario para jugar correctamente. \
 El archivo .zip se descarga haciendo click en el button verde que dice "<> Code" en la parte superior derecha de los archivos dentro de este repositorio y luego click en "Download .zip". \
-![No cargó la imagen](https://raw.githubusercontent.com/Gabriel-Lombardi/blackjack/blob/main/DownloadZip.jpg)
+![No cargó la imagen](DownloadZip.jpg)
