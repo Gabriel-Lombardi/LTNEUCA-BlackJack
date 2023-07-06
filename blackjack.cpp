@@ -55,7 +55,6 @@ void AltEnter()
 
 // Funcion que imprime "LTNEUCA" en la pantalla con caracteres ASCII
 void imprimirLTNEUCA() {
-  system("cls");
   printf("%c   %c%c%c%c%c %c%c   %c  %c%c%c%c  %c   %c   %c%c%c  %c%c%c%c\n", 220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220);
   printf("%c     %c   %c %c  %c  %c     %c   %c  %c     %c  %c\n", 219,219,219,219,219,219,219,219,219,219,219);
   printf("%c     %c   %c  %c %c  %c%c%c   %c   %c  %c     %c%c%c%c\n", 219,219,219,219,219,219,223,223,219,219,219,219,223,223,219);
@@ -66,7 +65,6 @@ void imprimirLTNEUCA() {
 
 // Funcion que imprime "BLACKJACK" en la pantalla con caracteres ASCII
 void imprimirBLACKJACK() {
-  system("cls");
   printf("%c%c%c  %c    %c%c   %c%c%c %c  %c    %c  %c%c   %c%c%c %c  %c\n", 220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220);
   printf("%c  %c %c   %c  %c %c    %c %c%c    %c %c  %c %c    %c %c%c\n", 219,219,219,219,219,219,219,220,223,219,219,219,219,219,220,223);
   printf("%c%c%c%c %c   %c%c%c%c %c    %c%c%c     %c %c%c%c%c %c    %c%c%c\n", 219,223,223,220,219,219,220,220,219,219,219,223,220,219,219,220,220,219,219,219,223,220);
@@ -295,9 +293,13 @@ void mostrarMano(char* palo, int valor) {
 
 int main() {
   AltEnter();
+  system("cls");
   imprimirLTNEUCA();
+  system("cls");
   imprimirBLACKJACK();
+  system("cls");
   imprimirLTNEUCA();
+  system("cls");
   imprimirBLACKJACK();
 
   reglas();
@@ -355,7 +357,9 @@ int main() {
       // break;
     case 4:
       // Salir del programa
-      printf("\nSaliendo del programa...\n");
+      printf("\nEsto es to-to-todo amigos!\nHasta luego!\n");
+      imprimirLTNEUCA();
+      sleep(2);
       exit(0);
     default:
       printf("\nOpcion invalida. Intente nuevamente.\n");
@@ -469,15 +473,17 @@ int main() {
         } else if (opcion == 2) { // Doblar apuesta
           if (dineroApostado * 2 > dinero) {
             system("cls");
-            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n");
-            goto turnoJugador;
+            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n\n");
+            mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+            goto opcionC;
+          } else {
+            mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+            Carta* cartaActual = mazo[indice];
+            indice++;
+            dineroApostado *= 2;
+            plantar = true;
+            goto doblarApuesta;
           }
-          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
-          Carta* cartaActual = mazo[indice];
-          indice++;
-          dineroApostado *= 2;
-          plantar = true;
-          goto doblarApuesta;
         } else if (opcion == 3) { // Plantarse
           plantar = true;
           break;
@@ -498,15 +504,17 @@ int main() {
         } else if (opcionChar == 'd') { // Doblar apuesta
           if (dineroApostado * 2 > dinero) {
             system("cls");
-            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n");
-            goto turnoJugador;
+            printf("\nNo tenes suficiente dinero como para doblar la apuesta.\n\n");
+            mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+            goto opcionC;
+          } else {
+            mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+            Carta* cartaActual = mazo[indice];
+            indice++;
+            dineroApostado *= 2;
+            plantar = true;
+            goto doblarApuesta;
           }
-          mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
-          Carta* cartaActual = mazo[indice];
-          indice++;
-          dineroApostado *= 2;
-          plantar = true;
-          goto doblarApuesta;
         } else if (opcionChar == 'p') { // Plantarse
           plantar = true;
           break;
@@ -575,7 +583,8 @@ int main() {
     guardarDinero(dinero);
     if(dinero == 0){
       for (int i = 0; i < 3; i++) {
-        printf("\nTe has quedado sin dinero. Fin del juego.\n");
+        printf("\nTe has quedado sin dinero. Fin del juego.\n\n\n\n\n");
+        imprimirLTNEUCA();
         sleep(2);
         system("cls");
         sleep(1);
@@ -600,8 +609,9 @@ int main() {
       case 2:
         goto menu;
       case 3:
-        printf("\nHasta luego!\n");
-        sleep(3);
+        printf("\nEsto es to-to-todo amigos!\nHasta luego!\n");
+        imprimirLTNEUCA();
+        sleep(2);
         exit(0);
     }
   }
