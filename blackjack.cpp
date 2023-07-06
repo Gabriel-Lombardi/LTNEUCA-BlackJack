@@ -81,7 +81,7 @@ void reglas() {
   printf(" === VALOR DE LAS CARTAS ===\n");
   printf("  El valor de las cartas en el Blackjack es muy importante ya que debemos de saber en todo momento la suma de nuestra mano para saber que decision tomar.\n");
   printf("  Si no sabemos cuanto vale nuestra mano, nunca podremos aplicar una estrategia que nos permita ganar.\n");
-  printf("  Los valores que toman las cartas son los siguientes:\n  %cDe la carta dos (2) hasta la carta diez (10), el valor de la carta es su propio numero.\n", 175);
+  printf("  Los valores que toman las cartas son los siguientes:\n   %cDe la carta dos (2) hasta la carta diez (10), el valor de la carta es su propio numero.\n", 175);
   printf("    %cLas figuras valen diez (10).\n", 175);
   printf("    %cLos Ases pueden valer uno (1) u once (11), eso depende de usted, usted elige cual le conviene.\n", 175);
   printf("\n === TURNO DEL CRUPIER ===\n");
@@ -452,7 +452,7 @@ int main() {
       printf("\nTotal del jugador: %d\n", totalJugador);      
       if (totalJugador == 21) {
         int ganancias = valorFicha * 2;
-        printf("\nBlackjack! Vos ganas. Has gando $%d", ganancias);
+        printf("\nBlackjack! Vos ganas. Has ganado $%d", ganancias);
         dinero += valorFicha * 2; // Dar al jugador lo acordado de la apuesta
         goto fin;
       } else if (totalJugador > 21) {
@@ -533,7 +533,7 @@ int main() {
     if (totalJugador <= 21 || plantar == true) {
       turnoCrupier = true;
       printf("\nTurno del crupier:\n");
-      sleep(2);
+      sleep(1);
 
       indice++;
       while (totalCrupier < 17) {
@@ -552,8 +552,8 @@ int main() {
         }
         totalCrupier += obtenerValorCarta(cartaActual,totalCrupier,turnoCrupier);
         printf("\nTotal del crupier: %d\n", totalCrupier);
-        sleep(2);
-        if (totalCrupier > totalJugador) {
+        sleep(1);
+        if (totalCrupier > totalJugador && totalCrupier <= 21) {
           int perdidas = dineroApostado;
           printf("\nCrupier gana. Has perdido $%d\n", perdidas);
           goto fin;
@@ -565,10 +565,10 @@ int main() {
         int ganancias = dineroApostado;
         printf("\nEl crupier se paso de 21. Jugador gana! Has ganado $%d\n", ganancias);
         dinero += dineroApostado * 2; // Dar al jugador lo acordado de la apuesta
-      } else if (totalCrupier > totalJugador && totalCrupier < 21) {
+      } else if (totalCrupier > totalJugador && totalCrupier <= 21) {
         int perdidas = dineroApostado;
         printf("\nCrupier gana. Has perdido $%d\n", perdidas);
-      } else if (totalCrupier < totalJugador && totalJugador < 21) {
+      } else if (totalCrupier < totalJugador && totalJugador <= 21) {
         int ganancias = dineroApostado * 2;
         dinero += ganancias; // Dar al jugador lo acordado de la apuesta
         printf("\nJugador gana. Has ganado $%d\n", ganancias);
@@ -579,7 +579,7 @@ int main() {
     }
 
     fin:
-    sleep(5);
+    sleep(4);
     guardarDinero(dinero);
     if(dinero == 0){
       for (int i = 0; i < 3; i++) {
