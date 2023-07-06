@@ -76,22 +76,24 @@ void imprimirBLACKJACK() {
 }
 
 void reglas() {
-  printf("=== REGLAS ===\n");
-  printf("Esta version de BlackJack es distinta a las ya existentes, en este juego, la idea es no superar los 21, si llegas a 21, ganaste!\n");
-  printf("El juego le dará una carta para empezar, debe tener en cuenta el número de esta\n");
+  printf(" === REGLAS ===\n");
+  printf("  Esta version de BlackJack es distinta a las ya existentes, en este juego, la idea es no superar los 21, si llegas a 21, ganaste!\n");
+  printf("  El juego le va a dar una carta para empezar, debe tener en cuenta el numero de esta\n");
   printf("\n");
-  printf("=== VALOR DE LAS CARTAS ===\n");
-  printf("El valor de las cartas en el Blackjack es muy importante ya que debemos de saber en todo momento la suma de nuestra mano para saber qué decisión tomar.\n");
-  printf("Si no sabemos cuánto vale nuestra mano, nunca podremos aplicar una estrategia que nos permita ganar.\n");
-  printf("Los valores que toman las cartas son los siguientes:\n  %cDe la carta dos (2) hasta la carta diez (10), el valor de la carta es su propio número.\n", 175);
-  printf("  %cLas figuras valen diez (10).\n", 175);
-  printf("  %cLos Ases pueden valer uno (1) u once (11), eso depende de usted, usted elige cual le conviene.\n", 175);
-  printf("=== TURNO DEL CRUPIER ===\n");
-  printf("En esta version del juego, el crupier juega en base a tu puntuacion, y no al reves como lo suele ser.\n");
-  printf("Esto supone una gran desventaja, ya que la banca siempre tiene las de ganar y mas en este caso.\n");
-  printf("\n\nSi desea continuar, toque cualquier tecla");
+  printf(" === VALOR DE LAS CARTAS ===\n");
+  printf("  El valor de las cartas en el Blackjack es muy importante ya que debemos de saber en todo momento la suma de nuestra mano para saber que decision tomar.\n");
+  printf("  Si no sabemos cuanto vale nuestra mano, nunca podremos aplicar una estrategia que nos permita ganar.\n");
+  printf("  Los valores que toman las cartas son los siguientes:\n  %cDe la carta dos (2) hasta la carta diez (10), el valor de la carta es su propio numero.\n", 175);
+  printf("    %cLas figuras valen diez (10).\n", 175);
+  printf("    %cLos Ases pueden valer uno (1) u once (11), eso depende de usted, usted elige cual le conviene.\n", 175);
+  printf("\n === TURNO DEL CRUPIER ===\n");
+  printf("  En esta version del juego, el crupier juega en base a tu puntuacion, y no al reves como lo suele ser.\n");
+  printf("  Esto supone una gran desventaja, ya que la banca siempre tiene las de ganar y mas en este caso.\n");
+  printf("\n ACLARACION!!!\n");
+  printf("\n  A la hora de DOBLAR UNA APUESTA, se le entrega una carta mas al jugador y se planta automaticamente, dejando jugar al Crupier (o no ;) )\n");
+  printf("\n\n  Si desea continuar, toque cualquier tecla");
   getch();
-  printf("\n\n== Buena suerte! ==\n");
+  printf("\n\n == Buena suerte! ==\n");
   sleep(5);
   system("cls");
 }
@@ -117,11 +119,16 @@ void opcionInvalida() {
 
 
 // Funcion para asignar el valor de las cartas para la suma de puntos
-int obtenerValorCarta(Carta* carta, int totalJugador) {
+int obtenerValorCarta(Carta* carta, int totalJugador, bool turnoCrupier) {
   int opcion;
+  if (turnoCrupier == true && carta->valor == 1) { // en caso de que sea el turno del crupier, si A fuera 11 y se pasara de 21, se devuelve 1, si no se devuelve 11
+    if (totalJugador + 11 > 21) return 1;
+    else                        return 11;
+  }
+
   if (carta->valor == 1) {
     valorAs:
-    printf("Le ha tocado un As, prefiere que su valor sea 1 u 11?\n");
+    printf("Le ha tocado un As, prefiere que su valor sea 1 u 11? \n");
     if (scanf(" %d", &opcion) == 1) {
       if (opcion == 1) {
         printf("Su eleccion fue 1, este As vale 1 ahora.\n");
@@ -129,6 +136,9 @@ int obtenerValorCarta(Carta* carta, int totalJugador) {
       } else if (opcion == 11) {
         printf("Su eleccion fue 11, este As vale 11 ahora.\n");
         return 11;
+      } else {
+        opcionInvalida();
+        goto valorAs;
       }
     } else {
       opcionInvalida();
@@ -387,6 +397,7 @@ int main() {
   int valorFicha     = 0;
   int indice         = 0;
   bool plantar       = false;
+  bool turnoCrupier  = false;
 
   while (1){
     // Turno del jugador
@@ -416,10 +427,10 @@ int main() {
       goto apuesta;
     }
 
+    doblarApuesta:
     while (totalJugador <= 21) {
       bool esNum = false;
       Carta* cartaActual = mazo[indice];
-      totalJugador += obtenerValorCarta(cartaActual,totalJugador);
       turnoJugador:
       mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
       if (mazo[indice]->valor == 1) {
@@ -433,7 +444,8 @@ int main() {
       } else {
         printf("\nEl jugador obtuvo un %d de %s.\n", mazo[indice]->valor, cartaActual->palo);
       }
-      printf("\nTotal del jugador: %d\n", totalJugador);
+      totalJugador += obtenerValorCarta(cartaActual,totalJugador,turnoCrupier);
+      printf("\nTotal del jugador: %d\n", totalJugador);      
       if (totalJugador == 21) {
         int ganancias = valorFicha * 2;
         printf("\nBlackjack! Vos ganas. Has gando $%d", ganancias);
@@ -444,8 +456,9 @@ int main() {
         printf("\nTe has pasado de 21. Crupier gana! Has perdido $%d\n", perdidas);
         goto fin;
       }
+      if (plantar == true) goto doblar;
       opcionC:
-      printf("\nPodes agarrar otra carta, doblar la apuesta o plantarte (1: +1 carta | 2: doblar apuesta | 3: plantarte): ");
+      printf("\nPodes agarrar otra carta, doblar la apuesta o plantarte (1/q/c: +1 carta | 2/d: doblar apuesta | 3/p: plantarte): ");
       int opcion;
       char opcionChar;
       if (scanf(" %d", &opcion) == 1) {
@@ -463,6 +476,8 @@ int main() {
           Carta* cartaActual = mazo[indice];
           indice++;
           dineroApostado *= 2;
+          plantar = true;
+          goto doblarApuesta;
         } else if (opcion == 3) { // Plantarse
           plantar = true;
           break;
@@ -470,8 +485,8 @@ int main() {
           printf("\nIngrese un numero valido, vamos de nuevo...\n");
           sleep(2);
           system("cls");
-          goto opcionC;
           mostrarMano(mazo[indice]->palo, mazo[indice]->valor);
+          goto opcionC;
         }
       } else {
         scanf(" %c", &opcionChar);
@@ -490,6 +505,8 @@ int main() {
           Carta* cartaActual = mazo[indice];
           indice++;
           dineroApostado *= 2;
+          plantar = true;
+          goto doblarApuesta;
         } else if (opcionChar == 'p') { // Plantarse
           plantar = true;
           break;
@@ -503,8 +520,10 @@ int main() {
       }
       
     }
+    doblar:
     // Turno del crupier
     if (totalJugador <= 21 || plantar == true) {
+      turnoCrupier = true;
       printf("\nTurno del crupier:\n");
       sleep(2);
 
@@ -523,7 +542,7 @@ int main() {
         } else {
           printf("\nEl crupier obtuvo un %d de %s.\n", mazo[indice]->valor, cartaActual->palo);
         }
-        totalCrupier += obtenerValorCarta(cartaActual,totalCrupier);
+        totalCrupier += obtenerValorCarta(cartaActual,totalCrupier,turnoCrupier);
         printf("\nTotal del crupier: %d\n", totalCrupier);
         sleep(2);
         if (totalCrupier > totalJugador) {
@@ -538,10 +557,10 @@ int main() {
         int ganancias = dineroApostado;
         printf("\nEl crupier se paso de 21. Jugador gana! Has ganado $%d\n", ganancias);
         dinero += dineroApostado * 2; // Dar al jugador lo acordado de la apuesta
-      } else if (totalCrupier > totalJugador) {
+      } else if (totalCrupier > totalJugador && totalCrupier < 21) {
         int perdidas = dineroApostado;
         printf("\nCrupier gana. Has perdido $%d\n", perdidas);
-      } else if (totalCrupier < totalJugador) {
+      } else if (totalCrupier < totalJugador && totalJugador < 21) {
         int ganancias = dineroApostado * 2;
         dinero += ganancias; // Dar al jugador lo acordado de la apuesta
         printf("\nJugador gana. Has ganado $%d\n", ganancias);
@@ -571,7 +590,7 @@ int main() {
     printf("1. Seguir jugando\n");
     printf("2. Ir al menu\n");
     printf("3. Salir del juego\n");
-    printf("Su upcion: ");
+    printf("Su opcion: ");
     scanf("%d", &fin);
     switch (fin) {
       case 1:
