@@ -28,5 +28,5 @@ El archivo .zip se descarga haciendo click en el button verde que dice "<> Code"
 ![No cargó la imagen](DownloadZip.jpg) \
 Una vez descargado debe descomprimirlo, abrir una consola (cmd, powershell, gitbash) en el directorio que se descomprimió el zip y poner en la consola: gcc -o ltneuca blackjack.cpp \
 Luego abrir el archivo "ltneuca.exe". \
-Puede hacer un acceso directo en el escritorio (click derecho, Enviar a [escritorio]) así es más cómodo para su uso. \
-A este acceso directo puede ponerle el icono que dejé :) 
+Puede hacer un acceso directo en el escritorio (click derecho, Enviar a -> escritorio) así es más cómodo para su uso. \
+A este acceso directo puede ponerle el icono que dejamos (LTNEUCA.ico) :)
