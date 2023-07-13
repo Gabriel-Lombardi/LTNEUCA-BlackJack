@@ -18,7 +18,7 @@ Proyecto VideoJuego\
     Uso de Archivos
 
 ### === LA TIMBA NO ES UNA COSA ALEGRE === 
-![No cargó la imagen](LTNEUCA.jpg) \
+![No cargó la imagen](LTNEUCA.jpg) 
 
 Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
 ○ Link de descarga: https://sourceforge.net/projects/mingw/ \
