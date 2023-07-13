@@ -17,7 +17,7 @@ Proyecto VideoJuego\
     Uso de Punteros \
     Uso de Archivos
 
-                            ### === LA TIMBA NO ES UNA COSA ALEGRE === \
+### === LA TIMBA NO ES UNA COSA ALEGRE === \
 ![No cargó la imagen](LTNEUCA.jpg) \
 
 Para poder correr el juego debe tener instalado el compilador de c++ MinGW\
