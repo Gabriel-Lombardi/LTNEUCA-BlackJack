@@ -13,9 +13,9 @@ Proyecto VideoJuego\
   \
   NO DEBEN FALTAR \
     Funciones y/o procedimientos\
-    Utilizar Structs\
-    Uso de Punteros\
-    Uso de Archivos\
+    Utilizar Structs \
+    Uso de Punteros \
+    Uso de Archivos \
 
 === LA TIMBA NO ES UNA COSA ALEGRE === \
 ![No cargó la imagen](LTNEUCA.jpg) \
